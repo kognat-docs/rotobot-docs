@@ -17,7 +17,7 @@ If you do have NVIDIA hardware, you initially are limited by your driver version
 | CUDA VERSION   | Linux Kernel Driver | Windows Hardware Driver | macOS CUDA Driver   |
 +----------------+---------------------+-------------------------+---------------------+
 | CUDA 10.0      | >= 410.48           | >= 411.31               | 410.130             |
-| (10.0.130)     |                     |                         |(macOS: 10.13.x)     |
+| (10.0.130)     |                     |                         | (macOS: 10.13.x)    |
 +----------------+---------------------+-------------------------+---------------------+
 | CUDA 9.2       | >= 396.37           | >= 398.26               |                     |
 | (9.2.148 upd 1)|                     |                         |                     |
@@ -31,8 +31,8 @@ If you do have NVIDIA hardware, you initially are limited by your driver version
 
 
 
-Here are some rules of thumb:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Install packages Guidance
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
  * Blackmagic Design's products (Standalone Fusion Studio 
    and DaVinci Resolve with the Fusion Panel) that are 

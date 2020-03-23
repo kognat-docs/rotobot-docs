@@ -5,10 +5,10 @@ System Adminstration Docs
 
 
 Functional description 
-=========================
+######################
 
 Details of OpenFX Plugins
-^^^^^^^^^^^^^^^^^^^^^^^^^
+=========================
 
 OpenFX plugins are shared libraries written in C/C++ which are initialised when an OpenFX host searches for executables.
 
@@ -16,23 +16,29 @@ The directories that are searched by default are
 
 Windows:
 ::
+
     C:\Program Files\Common Files\OFX\Plugins
 
 macOS:
 ::
+
     /Library/OFX/Plugins
 
 Linux:
 ::
+
     /usr/OFX/Plugins
 
 You can also search a number of paths using the environment variable
 ::
+
     OFX_PLUGIN_PATH
 
 If the folder/bundle called rotobot.ofx.bundle appears in the default directories or the search path as specified by
 ::
+
     OFX_PLUGIN_PATH
+
 in your runtime environment
 
 Initially the plugin will attempt to load, some OpenFX hosts such as Foundry Nuke, will blacklist a plugin if it does not load on first attempt, which can be caused by missing dynamic libraries at the first attempt at running the plugin.
@@ -41,15 +47,17 @@ The simplest way to attempt to load a plugin for a second time is to find the fi
 
 Linux and macOS:
 ::
+
     touch rotobot.ofx 
 
 Windows:
 ::
+
     copy /b rotobot.ofx +,,
 
 
 Caching of computation
-^^^^^^^^^^^^^^^^^^^^^^
+======================
 
 Rotobot computations are lengthy in comparison to other compositing operations but are fast in comparison to doing rotoscoping by hand.
 
@@ -61,7 +69,7 @@ Details of CUDA compatibility
 =============================
 
 CUDA Toolkit is installed with CuDNN dependency
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------
 
 CUDA is used to accelerate the computation of the deep neural networks that have been trained to deliver the Deep Learning solution of Rotobot.
 
@@ -74,18 +82,21 @@ Similarly the OpenFX host may make use of CUDA acceleration also.
 There is a Deep Neural Network software library from NVIDIA called CuDNN. It has been at major version 7 for a number of years. Only the minor and patch version of this library have been updated.
 
 CuDNN is always called the same thing
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------
 
 Windows:
 ::
+
     cudnn64_7.dll
 
 macOS:
 ::
+
     libcudnn.7.dylib
 
 Linux:
 ::
+
     libcudnn.so.7
 
 The version of CuDNN is dependant on the version of CUDA Toolkit that the binary was used to link against the deep learning framework.
@@ -162,15 +173,25 @@ When using the NVIDIA GPU for computation, the amount of memory required and all
 
 From the the smallest model here are the memory requirements
 
-Rotobot Instance Segmentation Standard: 2.8Gb
-Rotobot Instance Segmentation Experimental: 3.8Gb
-Rotobot Segmentation Standard: 4.2 Gb
-Rotobot Segmentation Approximate: 3.2 Gb
-Rotobot Trimap: 6.2 Gb
++----------------------------------------+----------------------------------+
+| Rotobot Model                          | Required Free CUDA Memory on GPU |
++----------------------------------------+----------------------------------+
+| Instance Segmentation Standard         | 2.8 Gb                           | 
++----------------------------------------+----------------------------------+
+| Segmentation Approximate               | 3.2 Gb                           |
++----------------------------------------+----------------------------------+
+| Instance Segmentation Experimental     | 3.8 Gb                           |
++----------------------------------------+----------------------------------+
+| Segmentation Standard                  | 4.2 Gb                           |
++----------------------------------------+----------------------------------+
+| Trimap                                 | 6.2 Gb                           |
++----------------------------------------+----------------------------------+
 
 Memory allocation works as follows, once the first Rotobot node is computed, the Deep Neural network memory will be allocated and then recycled among the different models.
 
 If you have 6.5 Gb of GPU memory free when the first node is computed you will have all nodes GPU accelerated. The amount of memory free will need to be 300Mb greater than the size of the model to allow for fluctuations in memory allocation.
+
+This suggest for best performance a 8 Gb card with about 7 Gb of free memory will give best results with Rotobot.
 
 Limitations of Resolution
 =========================
@@ -208,37 +229,332 @@ As a rule of thumb, if your image looks pale with the lookup table and looks nat
 
 Details of Environment variables
 ================================
+::
 
-OFX_PLUGIN_PATH
+    OFX_PLUGIN_PATH
+
 Rotobot will only be loaded if the rotobot.ofx.bundle is in the OFX_PLUGIN_PATH or the default OpenFX locations
 
-ROTOBOT_MODEL_DIR
+::
+
+    ROTOBOT_MODEL_DIR
+
 Will specify the default location of the files ending with .pb which are large trained neural network files.
 
-PATH (Windows only)
-This will need to include the shared_libraries subfolder from your install directory typically C:\Program Files\Kognat\shared_libraries
+::
+
+    PATH
+
+(Windows only)
+This will need to include the shared_libraries subfolder from your install directory typically
+
+::
+
+    C:\Program Files\Kognat\shared_libraries
 
 
-****************************
 Systems Administration Guide
-****************************
+############################
 
+Installing Rotobot should be trivial!
+
+But to make sure it is here are some guides, where possible we have forced Rotobot installers to use the Administration account and install to standard places.
+
+We are aware that many larger companies, who use Linux, use networked stores for the software locations which vary from studio to studio.
+
+For this reason we do NOT force Administration or super user rights for Linux installation.
+
+As a result if you use a standard user account rather than the administration user account some of the default functionality of the install wont work.
+
+But you can follow the network install guide to get things working, if you do not have super user rights.
 
 Installation
 ============
 
-Network installation
-^^^^^^^^^^^^^^^^^^^^
+Download the installer with the following executable formats after the installer archive has been extracted
+
+Windows
+
+::
+
+   <installer_name>.exe
+
+Linux
+
+::
+
+    <installer_name>.run
+
+MacOS
+
+::
+
+   <installer_name>(.app)
+
+
+On Windows and macOS, you need to double click on the installers graphically for default behaviour, which will escalate permissions to the Administration user and install to the default location
+
+Default Install Locations
+-------------------------
+
+Windows
+
+::
+
+   C:\Program Files\Kognat
+
+MacOS
+
+::
+
+   /Applications/Kognat
+
+Linux
+
+::
+
+    /opt/Kognat
+
+
+
+Components Installed
+====================
+
+Deep Learning Models
+--------------------
+
+There should be five deep learning models with the ``.pb`` file extension
+
+Open FX Folder/Bundle
+---------------------
+
+There should be a folder/bundle called ``rotobot.ofx.bundle`` this contains the executable binary and in the case of macOS and Linux all the support shared libraries
+
+Shared Libraries
+----------------
+
+On macOS and Linux, the shared libraries ending in ``.so`` for Linux and ``.dylib`` for macOS are in the relative rpath to the ``rotobot.ofx`` binary
+
+On Windows the supporting shared libraries or ``.dll`` binaries are in a sub folder called ``shared_libraries`` this needs to be on the ``%PATH%`` system environment variable
+
+The installer will add this folder to the path
+
+Main OpenFX Plugin
+------------------
+
+There is a file called ``rotobot.ofx`` which is the heart of the software, which is the pulled on by the OpenFX host program, your compositing package.
+
+
+License Files
+-------------
+
+There is a subfolder with the following components used by Reprise License Manager the license management system see :ref:`licensing`. 
+
+
+
+RLM License Utility
+^^^^^^^^^^^^^^^^^^^
+
+macOS and Linux
+
+::
+
+    rlmutil
+
+Windows
+
+::
+
+
+    rlmutil.exe
+
+This executable can be used to identify your rlmhost id for signing a license by Kongat staff
+
+RLM Server
+^^^^^^^^^^
+
+macOS and Linux
+
+::
+
+    rlm
+
+Windows
+
+::
+
+    rlm.exe
+
+These files are used to host the RLM Server
+
+
+RLM Independent Software Vendor Settings file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All Operating Sytems
+
+::
+
+    kognat.set
+
+This file allows the decryption of the license system with the settings for the Kognat as a independant software vendor using the RLM system.
+
 
 Installation on a single computer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=================================
+
+This is the default use of the installer using Administrator permissions.
+
+Windows
+-------
+
+1. Extract the zip folder
+2. Within the ``installer`` folder double click the Install Builder executable ``<name>.exe``
+3. If you see security warnings, the software signature process is incomplete, use your judgement to ignore warnings
+4. Allow Administration rights for the installer
+5. Follow the default choices.
+6. Software install should be complete, after the window closes, it should take less than two minutes on a reasonably fast disk.
 
 
+MacOS
+-----
+
+1. Extract the zip folder
+2. Within the ``installer`` folder double click the Install Builder executable
+3. If you see security warnings, the software signature process is incomplete, use your judgement to ignore warnings
+4. Allow Administration rights for the installer
+5. Follow the default choices.
+6. Software install should be complete, after the window closes, it should take less than two minutes on a reasonably fast disk.
+
+Linux
+-----
+
+1. Extract the zip folder
+2. Within the ``installer`` folder double click the Install Builder executable ending in the file extension ``.sh``
+3. Allow Administration rights for the installer by using the GUI or follow the guide below.
+4. In a GUI open a Command Prompt at the folder with the ``<installername>.sh`` file inside
+5. Within this folder in the commnd prompt CLI execute ``sudo ./*.sh`` and give the password
+6. Follow the default choices on the GUI.
+7. Software install should be complete, after the window closes, it should take less than two minutes on a reasonably fast disk.
+
+Network installation
+====================
+
+Linux
+-----
+
+Looking at the Bit Rock Install Builder command line help we can see the following
+
+::
+
+    Kognat Rotobot OpenFX Plugin X.Y.Z-cpu-only
+    Usage:
+    
+     --help                                      Display the list of valid options
+
+     --version                                   Display product information
+     
+     --unattendedmodeui <unattendedmodeui>       Unattended Mode UI
+                                                 Default: none
+                                                 Allowed: none minimal minimalWithDialogs
+    
+     --optionfile <optionfile>                   Installation option file
+                                                 Default: 
+    
+     --debuglevel <debuglevel>                   Debug information level of verbosity
+                                                 Default: 2
+                                                 Allowed: 0 1 2 3 4
+    
+     --mode <mode>                               Installation mode
+                                                 Default: gtk
+                                                 Allowed: gtk xwindow text unattended
+    
+     --debugtrace <debugtrace>                   Debug filename
+                                                 Default: 
+    
+     --installer-language <installer-language>   Language selection
+                                                 Default: en
+                                                 Allowed: sq ar es_AR az eu pt_BR bg ca hr cs da nl en et fi fr de el he hu id it ja kk ko lv lt no fa pl pt ro ru sr zh_CN sk sl es sv th zh_TW tr tk va vi cy
+    
+     --prefix <prefix>                           Installation Directory
+                                                 Default: /home/sam/Kognat
+
+
+1. Create a folder where you would like to unpack the contents of the installer
+2. in a ``bash`` shell create an environment variable to refer to this folder
+
+::
+
+     export DESTINATION=<fullpath_to_folder_in_step_1>
+
+3. change directories into the ``installer`` folder where you unzipped the ``.sh`` large installer file.
+4. Put the following into a shell
+
+::
+
+    ./*.sh --mode unattended --prefix $DESTINATION
+
+5. Then change to the 
+
+::
+
+   cd $DESTINATION
+
+6. Now you have `Components Installed`_ rather than being in `Default Install Locations`_  they are now in the folder you created which is your current directory.
+7. To use the software from this folder, it is simply a matter of setting some runtime environment variables see `Details of Environment variables`_.
+8. Append to ``OFX_PLUGIN_PATH`` to include the folder containing ``rotobot.ofx.bundle``
+9. Create and set an environment variable in your runtime environment for ``ROTOBOT_MODEL_DIR`` to a fast disk which has a folder containing the files with the ``.pb`` extension
+10. Maybe for a quick test the following will work for a ``bash`` shell
+
+::
+
+   export OFX_PLUGIN_PATH="${OFX_PLUGIN_PATH}:${PWD}"
+   export ROTOBOT_MODEL_DIR="${PWD}"
+
+11. You can now put this in a more permanent location or write tools to automate this process for network installations
+12. A good standard runtime environment can be found here: https://github.com/nerdvegas/rez/blob/master/README.md
+
+Rez example file
+----------------
+
+::
+
+    user@mtl-rmw001l rotobot $ cat package.py 
+    # pylint: disable=invalid-name
+    name = 'rotobot'
+
+    version = '1.3.5'
+
+    authors = ['Kognat']
+
+    description = 'AI driven rough rotoscoping OFX plugin.'
+
+    requires = ['nuke-10+']
+
+    # Requirements used during the build process only.
+    # Here "rdo_package_utils" is our library used to build packages.
+    private_build_requires = ['rdo_package_utils']
+
+    uuid = ''
+
+    # This tells to rez how to build the package.
+    build_command = 'python {root}/build.py'
+
+    def commands():
+        """Commands that will be ran at the execution of rez-env."""
+        import os
+        env = locals()['env']  # silence linters
+        pluginLocation = os.path.join('{root}', 'resources', 'linux', 'nuke')
+        env.OFX_PLUGIN_PATH.append(pluginLocation)
+        env.ROTOBOT_MODEL_DIR.append(pluginLocation)
+        env.kognat_LICENSE.append('8053@licsrv01')
 
 Reporting a fault
-^^^^^^^^^^^^^^^^^
+=================
 
-	
+
+Requesting a feature
+====================	
 
 	
 
