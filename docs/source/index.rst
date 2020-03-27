@@ -7,7 +7,7 @@ Welcome to Rotobot OpenFX Plugin's documentation!
 =================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
    
    faqs
