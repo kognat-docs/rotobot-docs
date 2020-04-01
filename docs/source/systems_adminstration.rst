@@ -176,15 +176,15 @@ From the the smallest model here are the memory requirements
 +----------------------------------------+----------------------------------+
 | Rotobot Model                          | Required Free CUDA Memory on GPU |
 +----------------------------------------+----------------------------------+
-| Instance Segmentation Standard         | 2.8 Gb                           | 
+| Instance Segmentation Standard         | 4.0 Gb                           | 
 +----------------------------------------+----------------------------------+
-| Segmentation Approximate               | 3.2 Gb                           |
+| Segmentation Approximate               | 4.4 Gb                           |
 +----------------------------------------+----------------------------------+
-| Instance Segmentation Experimental     | 3.8 Gb                           |
+| Instance Segmentation Experimental     | 5.0 Gb                           |
 +----------------------------------------+----------------------------------+
-| Segmentation Standard                  | 4.2 Gb                           |
+| Segmentation Standard                  | 5.4 Gb                           |
 +----------------------------------------+----------------------------------+
-| Trimap                                 | 6.2 Gb                           |
+| Trimap                                 | 8.1 Gb                           |
 +----------------------------------------+----------------------------------+
 
 Memory allocation works as follows, once the first Rotobot node is computed, the Deep Neural network memory will be allocated and then recycled among the different models.
