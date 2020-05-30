@@ -27,14 +27,22 @@ When you give a pixel coordinate you only get the ``cat`` under this pixel coord
 
 Using expressions and pixel tracking you can isolate in individual from a group.
 
-Rotobot Trimap
+Rotobot Person
 ^^^^^^^^^^^^^^
 
-A three colour alpha transperancy channel can be improved from black for background, white for foreground and other greys will be determined by the deep learning model.
+An RGB image of any colour space can be converted to an RGBA in that colour space detecting the pixels that belong to person.
 
-The improvement from a trimap hint alpha transperancy is that the resulting alpha transperancy channel has been trained to know what semi transperant edges should look like.
+Choose the color space your footage is in the (default in Nuke will be scene-linear or linear)
 
-The smaller the undetermined grey area is the less ambiguity for the deep learning model.
+Leave the color space for Rotobot in sRGB
+
+A progress bar will appear while calculating, the result with be a premultiplied RGBA
+
+Computation times of 0.1 fps are expected on a Pascal Generation GPU
+
+Use the environment variable `OCIO` to give a full path to an OCIO config.
+
+Search OpenColor IO on the internet for more details
 
 Input and Output are RGB and RGBA
 =================================
@@ -49,6 +57,10 @@ To use the result to make an alpha transperancy, a user can shuffle the channels
 The following nodes expect a 32 bit per pixel RGBA input and will return a RGBA output
 
 #. Rotobot Trimap
+
+The following node expects a 32 bit per pixel RGB input and will return an RGBA output
+
+#. Rotobot Person
 
 
 .. `input_colorspace`
@@ -65,6 +77,8 @@ For this reason, if you use an OCIO Color Transform Node to compute an sRGB or r
 In this way you can convert a ACEScg Scene Linear image to a sRGB Display Image.
 
 A good test is to compare the image of an image from the Internet such as a PNG or JPEG image with no colour managment to your input to a Rotobot node, they should have a comparable look.
+
+(Note Rotobot person has its color management built in.)
 
 
 Create a mask using Rotobot Segmentation
